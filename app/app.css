@@ -7,9 +7,12 @@
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
+  transition: background-color 0.3s ease;
+  background-color: #c5eaee; /* Light mode default */
+}
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
+/* Apply dark mode when the 'dark' class is added to <body> */
+body.dark {
+  background-color: #111827; /* Dark mode background (adjust as needed) */
+  color: white; /* Ensures text is readable */
 }
