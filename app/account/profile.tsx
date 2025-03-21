@@ -20,12 +20,13 @@ export function Profile({ selectedGoals, setSelectedGoals, darkMode, setDarkMode
 
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
-        if(!localStorage.getItem("user-" + name.trim())){ // If account exists
+        if(localStorage.getItem("user-" + name.trim())){ // If account exists
             if(localStorage.getItem("user-" + name.trim()) && email.trim() != localStorage.getItem("user-" + name.trim())){
                 alert("Email associated with existing account does not match!")
             }else{
                 if (name.trim() && email.trim()) {
                     setIsLoggedIn(true);
+                    console.log("ran2");
                     if(localStorage.getItem("pfp-" + name.trim())){
                         setProfilePic(localStorage.getItem("pfp-" + name.trim()));
                     }
@@ -34,6 +35,7 @@ export function Profile({ selectedGoals, setSelectedGoals, darkMode, setDarkMode
         }else{
             if (name.trim() && email.trim()) {
                 localStorage.setItem("user-" + name.trim(), email.trim());
+                console.log("Ran");
                 setIsLoggedIn(true);
             }
         }
