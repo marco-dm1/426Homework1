@@ -1,8 +1,5 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import avatar from "./avatar.jpg"; // Default avatar
-
-// User Profiles: Implement a profile feature that allows users to track their progress and personalize their experience.
-// Import goal string array from goal component
 import { goals } from "../goals/goalsetting";
 
 interface ProfileProps {
@@ -13,6 +10,13 @@ interface ProfileProps {
 }
 
 export function Profile({ selectedGoals, setSelectedGoals, darkMode, setDarkMode }: ProfileProps) {
+    useEffect(() => {
+        if(isLoggedIn){ // If selectedGoals changed and user is logged in
+            localStorage.setItem("goals-" + name.trim(), selectedGoals.toString());
+            console.log("Saving user's goals in localStorage")
+        }
+    }, [selectedGoals]);
+    
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -39,13 +43,17 @@ export function Profile({ selectedGoals, setSelectedGoals, darkMode, setDarkMode
                 setIsLoggedIn(true);
             }
         }
+
+        if(localStorage.getItem("goals-" + name.trim())){ // If the user has goals saved then load those into the state
+            setSelectedGoals(JSON.parse('[' + localStorage.getItem("goals-" + name.trim()) + ']'))
+        }
     };
 
     const handleLogout = () => {
         setIsLoggedIn(false);
         setName("");
         setEmail("");
-        setProfilePic(null); // Reset profile picture on logout
+        setProfilePic(null);
         setSelectedGoals([]);
     };
 
@@ -68,7 +76,6 @@ export function Profile({ selectedGoals, setSelectedGoals, darkMode, setDarkMode
             </div>
             <div id="profileContainer" className={`${darkMode ? "bg-gray-800 text-white" : "bg-emerald-100 text-black"} p-5`}>
                 {!isLoggedIn ? (
-                    // Login Form
                     <form onSubmit={handleLogin} className="flex flex-col items-center space-y-3">
                         <input
                             type="text"
@@ -94,26 +101,21 @@ export function Profile({ selectedGoals, setSelectedGoals, darkMode, setDarkMode
                         </button>
                     </form>
                 ) : (
-                    // Logged-in User Info
                     <div className="flex flex-col items-center">
-                        {/* Profile Picture */}
                         <img
                             src={profilePic || avatar}
                             alt="User Avatar"
                             className="w-24 h-24 rounded-full object-cover border-2 border-gray-300"
                         />
-                        {/* User Info */}
                         <h2 className="mt-3 text-xl font-semibold">{name}</h2>
                         <p className={`${darkMode ? "text-white bg-gray-800" : "bg-emerald-100 text-gray-700"} p-5`}>{email}</p>
 
-                        {/* Goal Progress Display */}
                         <div className={`${darkMode ? "bg-gray-600 text-white" : "bg-emerald-200 text-black"} mt-5 p-4 rounded-lg shadow-md`}>
                             <h3 className="text-lg font-semibold">
                                 Goals Completed: {selectedGoals.length}/{goals.length}
                             </h3>
                         </div>
 
-                        {/* Profile Picture Upload */}
                         <input
                             type="file"
                             accept="image/*"
@@ -128,7 +130,6 @@ export function Profile({ selectedGoals, setSelectedGoals, darkMode, setDarkMode
                             Upload Profile Picture
                         </label>
 
-                        {/* Logout Button */}
                         <button
                             onClick={handleLogout}
                             className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-600 transition"
